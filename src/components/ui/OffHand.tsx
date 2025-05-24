@@ -6,13 +6,13 @@ import { Card as TCard, getRank, Player } from "../../lib";
 import Card from "./Card";
 import CardHolder from "./CardHolder";
 
-type Position = 0 | 1 | 2;
+type Position = number;
 
 export interface OffHandProps {
   offHand: Player["offHand"];
   flipped?: boolean;
-  onCardPositionedClick?: (card: TCard, position: Position, n?: number) => void;
-  grayOutFaceUpCard?: (card: TCard, position: Position) => boolean;
+  onCardPositionedClick?: (card: TCard, position: number, n?: number) => void;
+  grayOutFaceUpCard?: (card: TCard, position: number) => boolean;
   disable?: boolean;
 }
 
@@ -27,7 +27,7 @@ export default function OffHand(props: OffHandProps) {
   }
 
   const [selected, setSelected] = useState<TCard | null>(null);
-  function onCardPositionedClick(card: TCard, i: Position, n?: number) {
+  function onCardPositionedClick(card: TCard, i: number, n?: number) {
     if (props.disable) return;
     if (props.grayOutFaceUpCard?.(card, i)) return;
 
@@ -49,42 +49,48 @@ export default function OffHand(props: OffHandProps) {
       exit={{ y: 300 * flippedSign }}
       className="flex justify-center gap-2 md:gap-4"
     >
-      {[0, 1, 2].map((index) => (
-        <CardHolder key={index}>
-          {props.offHand.faceDown[index] !== undefined && (
+      {[0, 1, 2].map((index) => {
+        if (props.offHand.faceDown[index] === undefined) return null;
+        return (
+          <CardHolder key={`faceDown-${index}`}>
             <div className="absolute">
               <Card
                 flipped
                 card={props.offHand.faceDown[index]}
                 onClick={(card) =>
-                  props.onCardPositionedClick?.(card!, index as Position)
+                  props.onCardPositionedClick?.(card!, index)
                 }
               />
             </div>
-          )}
-          {props.offHand.faceUp[index] !== undefined && (
+          </CardHolder>
+        );
+      })}
+      {props.offHand.faceUp.map((faceUpCard, index) => {
+        if (faceUpCard === undefined) return null;
+        return (
+          <CardHolder key={`faceUp-${index}`}>
             <div className="absolute">
               <Card
-                withSelector={selected === props.offHand.faceUp[index]}
-                selectorMax={sameRanksAmnt(props.offHand.faceUp[index])}
-                card={props.offHand.faceUp[index]}
+                withSelector={selected === faceUpCard}
+                selectorMax={sameRanksAmnt(faceUpCard)}
+                card={faceUpCard}
                 z={1}
                 onClick={(_, n) =>
                   onCardPositionedClick(
-                    props.offHand.faceUp[index]!,
-                    index as Position,
+                    faceUpCard!,
+                    index,
                     n
                   )
                 }
                 grayOut={props.grayOutFaceUpCard?.(
-                  props.offHand.faceUp[index]!,
-                  index as Position
+                  faceUpCard!,
+                  index
                 )}
               />
             </div>
-          )}
-        </CardHolder>
-      ))}
+          </CardHolder>
+        );
+      })}
     </motion.div>
   );
 }

@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 
 import * as selectors from "../state/selectors";
+import { getPlayerOffHand } from "../state/selectors";
 import { GlobalStateContext } from "./providers/GlobalStateProvider";
 
 import Deck from "./Deck";
@@ -17,6 +18,9 @@ export default function App() {
   const isPlaying = GlobalStateContext.useSelector(selectors.isPlaying);
   const isChoosingFaceUpCards = GlobalStateContext.useSelector(
     selectors.isChoosingFaceUpCards
+  );
+  const humanOffHand = GlobalStateContext.useSelector(
+    getPlayerOffHand("human")
   );
   const isGameOver = GlobalStateContext.useSelector(selectors.isGameOver);
 
@@ -63,6 +67,12 @@ export default function App() {
           className="m-auto"
         >
           <HumanOffHand />
+          {isChoosingFaceUpCards &&
+            humanOffHand.faceUp.filter(Boolean).length === 3 && (
+              <div className="mt-4 text-center text-white">
+                You are ready to continue the game
+              </div>
+            )}
         </motion.div>
       )}
       {!isChoosingFaceUpCards && (

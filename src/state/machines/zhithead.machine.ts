@@ -156,7 +156,7 @@ export const zhitheadMachine = setup({
   },
   guards: {
     hasChosenAllFaceUpCards: ({ context }) =>
-      context.human.offHand.faceUp.length === 3,
+      context.human.offHand.faceUp.length >= 3,
     canPlay: ({ context, event }) => {
       if (event.type !== "CARD_CHOSEN") {
         return false;
@@ -196,7 +196,7 @@ export const zhitheadMachine = setup({
         CARD_CHOSEN: {
           actions: "placeInOffhand",
           target: "choosingFaceUpCards",
-          // guard: not("hasChosenAllFaceUpCards"),
+          cond: ({ context }) => context.human.offHand.faceUp.length < 15,
           reenter: true,
         },
       },
