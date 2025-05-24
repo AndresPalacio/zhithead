@@ -40,7 +40,7 @@ function createInitialContext(): ZhitheadContext {
   const shuffledDeck = shuffle(createDeck());
   const [deck, [human, bot]] = dealCardsFor(2, shuffledDeck);
 
-  bot.offHand.faceUp = bot.hand.splice(0, 3) as OffHandCards;
+  bot.offHand.faceUp = bot.hand.splice(0, 3);
 
   return {
     deck,

@@ -104,7 +104,7 @@ export interface Player {
   hand: Cards;
   offHand: {
     faceDown: OffHandCards;
-    faceUp: OffHandCards;
+    faceUp: Cards;
   };
 }
 
@@ -150,7 +150,7 @@ export function isPlayerCurrentHand(player: Player, ...kinds: HandKind[]) {
   return kinds.some((kind) => playerCurHand(player) === kind);
 }
 
-const STARTING_HAND_SIZE = 6;
+const STARTING_HAND_SIZE = 15;
 const STARTING_FACEDOWN_SIZE = 3;
 
 export function dealCards(deck: Readonly<Deck>): [Deck, Player] {
